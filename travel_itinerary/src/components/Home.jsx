@@ -234,7 +234,7 @@ export default function Home() {
           </div>
           
           <div className="space-y-5">
-            {trips.map((trip, index) => renderTripCard(trip, index))}
+            {tripsByContinent[activeCategory]?.map((trip, index) => renderTripCard(trip, index))}
           </div>
         </div>
       )}
