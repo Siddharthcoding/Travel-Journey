@@ -1,12 +1,53 @@
-# React + Vite
+# Travel Journey Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the Travel Journey application, a React-based web app for exploring and booking travel itineraries.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Beautiful landing page with animated elements
+- User authentication (signup, login)
+- Trip browsing and filtering
+- Trip details view with itinerary
+- Responsive design with dark mode support
+- Integration with backend API
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clone the repository
+2. Install dependencies:
+```
+npm install
+```
+3. Create a `.env` file in the root directory with the following variables:
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
+## Running the Application
+
+Start the development server:
+```
+npm run dev
+```
+
+Build for production:
+```
+npm run build
+```
+
+Preview the production build:
+```
+npm run preview
+```
+
+## Connecting to the Backend
+
+Make sure the backend server is running at http://localhost:5000 (or update the `.env` file if using a different URL).
+
+## Technologies Used
+
+- React 19
+- React Router v7
+- Framer Motion for animations
+- Tailwind CSS for styling
+- Axios for API requests

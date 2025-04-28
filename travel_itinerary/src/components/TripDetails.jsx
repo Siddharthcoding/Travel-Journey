@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppContext } from "../context/AppContext";
@@ -9,10 +9,34 @@ export default function TripDetails() {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("Tour schedule");
   const [expandedDays, setExpandedDays] = useState([1]);
-  const { getTripDetails, toggleLike } = useAppContext();
+  const { getTripDetails, toggleLike, loading } = useAppContext();
+  const [trip, setTrip] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const tabs = ["Tour schedule", "Accommodation", "Booking details"];
-  const trip = getTripDetails(Number(id));
+  
+  useEffect(() => {
+    const fetchTripDetails = async () => {
+      setIsLoading(true);
+      try {
+        const tripData = await getTripDetails(id);
+        if (tripData) {
+          setTrip(tripData);
+          setError(null);
+        } else {
+          setError("Trip not found");
+        }
+      } catch (err) {
+        console.error("Error fetching trip details:", err);
+        setError("Failed to load trip details");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchTripDetails();
+  }, [id, getTripDetails]);
   
   const toggleDayExpansion = (day) => {
     if (expandedDays.includes(day)) {
@@ -22,9 +46,15 @@ export default function TripDetails() {
     }
   };
   
-  if (!trip) return (
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+    </div>
+  );
+  
+  if (error || !trip) return (
     <div className="p-8 text-center">
-      <p>Trip not found.</p>
+      <p>{error || "Trip not found."}</p>
       <button 
         onClick={() => navigate("/home")}
         className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded-lg"
@@ -53,7 +83,7 @@ export default function TripDetails() {
         </button>
         <button 
           className="absolute top-4 right-4 bg-white/30 backdrop-blur-sm rounded-full p-2"
-          onClick={() => toggleLike(trip.id)}
+          onClick={() => toggleLike(trip._id)}
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -94,7 +124,7 @@ export default function TripDetails() {
           <div className="mt-6">
             <h2 className="text-xl font-bold">{trip.days}-Days {trip.country} Adventure</h2>
             
-            {trip.itinerary.map((day, index) => (
+            {trip.itinerary && trip.itinerary.map((day, index) => (
               <motion.div
                 key={day.day}
                 initial={{ opacity: 0, y: 20 }}

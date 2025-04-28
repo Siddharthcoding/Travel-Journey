@@ -15,9 +15,11 @@ app.use(express.json());
 
 // Import routes - FIX HERE, use named import instead of default
 import { router as authRoutes } from './src/routes/auth.js';
+import { router as tripRoutes } from './src/routes/trips.js';
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/trips', tripRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -28,7 +30,7 @@ app.use((err, req, res, next) => {
 // Connect to MongoDB
 const PORT = process.env.PORT || 5000;
 mongoose
-  .connect(process.env.MONGO_URI || 'mongodb://localhost:27017/travel_itinerary')
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {

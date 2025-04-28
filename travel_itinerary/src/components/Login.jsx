@@ -174,12 +174,12 @@ export default function Login() {
           transition={{ duration: 0.8 }}
           className="w-full max-w-md"
         >
-          <div className="text-center mb-8">
+          <div className="text-center mb-10">
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="mb-6"
+              className="mb-8"
             >
               <Link to="/">
                 <img 
@@ -194,23 +194,31 @@ export default function Login() {
               </Link>
             </motion.div>
             
-            <motion.h1
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-5xl font-light text-white mb-3"
+              className="mb-2"
             >
-              <span className="font-bold">Welcome</span> Back
-            </motion.h1>
+              <h1 className="text-xs uppercase tracking-[0.2em] text-emerald-300 font-semibold mb-2">Welcome Back</h1>
+              <p className="text-5xl md:text-6xl font-extralight text-white leading-tight">
+                <span className="font-bold italic">Continue</span> your <br/> 
+                <span className="text-4xl md:text-5xl font-normal tracking-wide">ADVENTURE</span>
+              </p>
+            </motion.div>
             
-            <motion.p 
+            <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-lg text-emerald-300 font-light"
+              className="flex items-center justify-center"
             >
-              Log in to continue your journey
-            </motion.p>
+              <div className="h-[1px] w-10 bg-emerald-400/50"></div>
+              <p className="text-sm text-white/60 font-light mx-3 italic">
+                Unlock your travel memories
+              </p>
+              <div className="h-[1px] w-10 bg-emerald-400/50"></div>
+            </motion.div>
           </div>
           
           <motion.div 
@@ -227,25 +235,25 @@ export default function Login() {
             
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="email" className="block text-white/90 font-medium mb-2 text-sm">
-                  Email
+                <label htmlFor="email" className="block text-white/90 font-medium mb-2 text-xs uppercase tracking-wider">
+                  Email Address
                 </label>
                 <input
                   id="email"
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                   placeholder="you@example.com"
                 />
               </div>
               
               <div>
                 <div className="flex justify-between mb-2">
-                  <label htmlFor="password" className="block text-white/90 font-medium text-sm">
+                  <label htmlFor="password" className="block text-white/90 font-medium text-xs uppercase tracking-wider">
                     Password
                   </label>
-                  <Link to="/forgot-password" className="text-xs text-emerald-300 hover:text-emerald-200 hover:underline transition-colors">
+                  <Link to="/forgot-password" className="text-xs text-emerald-300 hover:text-emerald-200 hover:underline transition-colors italic">
                     Forgot Password?
                   </Link>
                 </div>
@@ -254,7 +262,7 @@ export default function Login() {
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -262,7 +270,7 @@ export default function Login() {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl flex justify-center items-center transition-colors mt-6"
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl flex justify-center items-center transition-colors mt-8 tracking-wider uppercase text-sm"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -271,17 +279,17 @@ export default function Login() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                ) : "Login"}
+                ) : "Sign In"}
               </motion.button>
             </form>
             
             <div className="mt-8 text-center">
-              <p className="text-white/70 text-sm">
-                Don't have an account? 
-                <Link to="/signup" className="text-emerald-300 font-medium ml-2 hover:text-emerald-200 hover:underline transition-colors">
-                  Sign Up
-                </Link>
+              <p className="text-white/60 text-sm">
+                Don't have an account?
               </p>
+              <Link to="/signup" className="text-emerald-300 font-medium hover:text-emerald-200 hover:underline transition-colors text-base inline-block mt-1">
+                <span className="font-light">Create a</span> <span className="font-bold">New Account</span>
+              </Link>
             </div>
           </motion.div>
         </motion.div>

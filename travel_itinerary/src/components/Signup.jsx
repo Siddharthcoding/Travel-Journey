@@ -181,12 +181,12 @@ export default function Signup() {
           transition={{ duration: 0.8 }}
           className="w-full max-w-md"
         >
-          <div className="text-center mb-8">
+          <div className="text-center mb-9">
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="mb-6"
+              className="mb-7"
             >
               <Link to="/">
                 <img 
@@ -201,23 +201,26 @@ export default function Signup() {
               </Link>
             </motion.div>
             
-            <motion.h1
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-5xl font-light text-white mb-3"
+              className="mb-3"
             >
-              <span className="font-bold text-emerald-400">Start</span> Your Journey
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-lg text-emerald-300 font-light"
-            >
-              Sign up to begin your adventure
-            </motion.p>
+              <div className="flex items-center justify-center mb-3">
+                <div className="h-px w-16 bg-emerald-400/40"></div>
+                <span className="text-xs uppercase tracking-[0.25em] text-emerald-300 font-bold mx-3">Join Us</span>
+                <div className="h-px w-16 bg-emerald-400/40"></div>
+              </div>
+              
+              <h1 className="text-5xl md:text-6xl font-black text-white mb-1 tracking-tight">
+                BEGIN YOUR <span className="text-emerald-400 font-extrabold italic">STORY</span>
+              </h1>
+              
+              <p className="text-base md:text-lg font-thin text-white/80 mt-2 tracking-wide">
+                Create an account to <span className="font-medium">discover</span> and <span className="font-medium">explore</span> new places
+              </p>
+            </motion.div>
           </div>
           
           <motion.div 
@@ -234,7 +237,7 @@ export default function Signup() {
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-white/90 font-medium mb-2 text-sm">
+                <label htmlFor="name" className="block text-white/90 font-medium mb-2 text-xs uppercase tracking-wider">
                   Full Name
                 </label>
                 <input
@@ -242,57 +245,59 @@ export default function Signup() {
                   type="text" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                   placeholder="John Doe"
                 />
               </div>
               
               <div>
-                <label htmlFor="email" className="block text-white/90 font-medium mb-2 text-sm">
-                  Email
+                <label htmlFor="email" className="block text-white/90 font-medium mb-2 text-xs uppercase tracking-wider">
+                  Email Address
                 </label>
                 <input
                   id="email"
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                   placeholder="you@example.com"
                 />
               </div>
               
-              <div>
-                <label htmlFor="password" className="block text-white/90 font-medium mb-2 text-sm">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-                  placeholder="••••••••"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="confirmPassword" className="block text-white/90 font-medium mb-2 text-sm">
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  type="password" 
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-                  placeholder="••••••••"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="password" className="block text-white/90 font-medium mb-2 text-xs uppercase tracking-wider">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    placeholder="••••••••"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-white/90 font-medium mb-2 text-xs uppercase tracking-wider">
+                    Confirm
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    type="password" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    placeholder="••••••••"
+                  />
+                </div>
               </div>
               
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-xl flex justify-center items-center transition-colors mt-6"
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl flex justify-center items-center transition-colors mt-8 tracking-wider uppercase text-sm"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -301,17 +306,20 @@ export default function Signup() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                ) : "Create Account"}
+                ) : "Start Your Journey"}
               </motion.button>
             </form>
             
-            <div className="mt-6 text-center">
-              <p className="text-white/70 text-sm">
-                Already have an account? 
-                <Link to="/login" className="text-emerald-300 font-medium ml-2 hover:text-emerald-200 hover:underline transition-colors">
-                  Log In
-                </Link>
+            <div className="mt-6 text-center flex flex-col items-center">
+              <p className="text-white/60 text-sm mb-2">
+                Already have an account?
               </p>
+              <Link to="/login" className="text-white font-medium hover:text-emerald-200 transition-colors inline-flex items-center group">
+                <span className="mr-1 group-hover:underline">Sign In</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-emerald-300 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
             </div>
           </motion.div>
         </motion.div>
