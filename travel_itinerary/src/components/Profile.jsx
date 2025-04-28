@@ -1,9 +1,20 @@
 import React from "react";
 import { useAppContext } from "../context/AppContext";
 import BottomNav from "./BottomNav";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { user } = useAppContext();
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    if (confirm("Are you sure you want to log out?")) {
+      logout();
+      navigate('/login');
+    }
+  };
   
   return (
     <div className="pb-24">
@@ -74,7 +85,7 @@ export default function Profile() {
             
             <button 
               className="mt-8 w-full py-3 bg-red-100 text-red-600 rounded-xl font-semibold"
-              onClick={() => confirm("Are you sure you want to log out?") && alert("Logged out successfully")}
+              onClick={handleLogout}
             >
               Log Out
             </button>

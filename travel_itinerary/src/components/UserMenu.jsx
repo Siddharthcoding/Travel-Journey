@@ -20,7 +20,7 @@ export default function UserMenu() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 z-30"
+            className="fixed inset-0 bg-black/20 dark:bg-black/40 z-30"
             onClick={closeUserMenu}
           />
           <motion.div
@@ -28,9 +28,9 @@ export default function UserMenu() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ type: "spring", damping: 25 }}
-            className="absolute top-16 right-4 bg-white rounded-2xl shadow-xl z-40 w-60 overflow-hidden"
+            className="absolute top-16 right-4 bg-white dark:bg-dark-card rounded-2xl shadow-xl dark:shadow-dark-shadow z-40 w-60 overflow-hidden"
           >
-            <div className="p-4 border-b border-gray-100">
+            <div className="p-4 border-b border-gray-100 dark:border-dark-border">
               <div className="flex items-center">
                 <img 
                   src={user.avatar} 
@@ -46,7 +46,7 @@ export default function UserMenu() {
             
             <div className="py-2">
               <button 
-                className="w-full px-4 py-2 text-left hover:bg-gray-50 transition"
+                className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/profile')}
               >
                 <div className="flex items-center">
@@ -58,7 +58,7 @@ export default function UserMenu() {
               </button>
               
               <button 
-                className="w-full px-4 py-2 text-left hover:bg-gray-50 transition"
+                className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/saved')}
               >
                 <div className="flex items-center">
@@ -70,7 +70,7 @@ export default function UserMenu() {
               </button>
               
               <button 
-                className="w-full px-4 py-2 text-left hover:bg-gray-50 transition"
+                className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/settings')}
               >
                 <div className="flex items-center">

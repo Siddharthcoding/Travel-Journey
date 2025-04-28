@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppContext } from "../context/AppContext";
@@ -21,6 +21,21 @@ export default function Home() {
   const [showSortMenu, setShowSortMenu] = useState(false);
   const categories = ["All", "Asia", "Europe", "South America", "North America", "Africa"];
   
+  // Debug - log trips when they change or sort changes
+  useEffect(() => {
+    console.log("Current sort:", sortBy);
+    console.log("Trips in the component:", trips.map(t => `${t.title} - $${t.priceValue}`));
+  }, [trips, sortBy]);
+  
+  // Map sort types to display names
+  const sortNames = {
+    "recommended": "Recommended",
+    "price-low": "Price: Low to High",
+    "price-high": "Price: High to Low",
+    "rating": "Highest Rated",
+    "reviews": "Most Reviewed"
+  };
+  
   return (
     <div className="pb-24">
       {/* Header */}
@@ -38,7 +53,7 @@ export default function Home() {
           <input 
             type="text" 
             placeholder="Search destinations, countries, experiences..." 
-            className="w-full py-3 pl-10 pr-4 bg-white rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            className="w-full py-3 pl-10 pr-4 bg-white dark:bg-dark-card rounded-full border border-gray-200 dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark focus:border-transparent"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
           />
@@ -53,20 +68,20 @@ export default function Home() {
           </motion.button>
         </div>
         
-        {/* Sort menu indicator */}
+        {/* Sort menu indicator with animation */}
         {sortBy !== "recommended" && (
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mt-2 flex items-center justify-end"
           >
-            <span className="text-xs text-gray-500">
+            <span className="text-xs flex items-center text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
+              </svg>
               Sorted by: 
-              <span className="font-medium ml-1">
-                {sortBy === "price-low" ? "Price: Low to High" : 
-                 sortBy === "price-high" ? "Price: High to Low" : 
-                 sortBy === "rating" ? "Rating" : 
-                 sortBy === "reviews" ? "Reviews" : "Recommended"}
+              <span className="font-medium ml-1 text-black">
+                {sortNames[sortBy]}
               </span>
             </span>
           </motion.div>
@@ -105,7 +120,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-3xl overflow-hidden shadow-md mb-5"
+              className="bg-white dark:bg-dark-card rounded-3xl overflow-hidden shadow-md dark:shadow-dark-shadow mb-5"
             >
               <div className="relative">
                 <img 
@@ -149,13 +164,13 @@ export default function Home() {
               </div>
               
               <div className="p-4">
-                <p className="text-gray-600 text-sm line-clamp-2">{trip.description}</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">{trip.description}</p>
                 <div className="flex justify-between items-center mt-3">
                   {trip.price && <div className="text-emerald-600 font-semibold">{trip.price}</div>}
                   <motion.button 
                     whileHover={{ x: 3 }}
                     whileTap={{ scale: 0.9 }}
-                    className="ml-auto flex items-center justify-center rounded-full bg-gray-100 w-10 h-10"
+                    className="ml-auto flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 w-10 h-10"
                     onClick={() => navigate(`/trip/${trip.id}`)}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

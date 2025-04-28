@@ -20,7 +20,7 @@ export default function HamburgerMenu() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 z-30"
+            className="fixed inset-0 bg-black/20 dark:bg-black/40 z-30"
             onClick={closeMainMenu}
           />
           <motion.div
@@ -28,9 +28,9 @@ export default function HamburgerMenu() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25 }}
-            className="fixed top-0 right-0 h-full bg-white w-64 shadow-xl z-40"
+            className="fixed top-0 right-0 h-full bg-white dark:bg-dark-card w-64 shadow-xl dark:shadow-dark-shadow z-40"
           >
-            <div className="p-5 border-b border-gray-100 flex justify-between items-center">
+            <div className="p-5 border-b border-gray-100 dark:border-dark-border flex justify-between items-center">
               <h2 className="text-lg font-bold">Menu</h2>
               <button 
                 className="p-2 rounded-full hover:bg-gray-100"
@@ -44,7 +44,7 @@ export default function HamburgerMenu() {
             
             <div className="py-2">
               <button 
-                className="w-full px-5 py-3 text-left hover:bg-gray-50 transition"
+                className="w-full px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/home')}
               >
                 <div className="flex items-center">
@@ -56,7 +56,7 @@ export default function HamburgerMenu() {
               </button>
               
               <button 
-                className="w-full px-5 py-3 text-left hover:bg-gray-50 transition"
+                className="w-full px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/explore')}
               >
                 <div className="flex items-center">
@@ -68,7 +68,7 @@ export default function HamburgerMenu() {
               </button>
               
               <button 
-                className="w-full px-5 py-3 text-left hover:bg-gray-50 transition"
+                className="w-full px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/destination/1')}
               >
                 <div className="flex items-center">
@@ -81,7 +81,7 @@ export default function HamburgerMenu() {
               </button>
               
               <button 
-                className="w-full px-5 py-3 text-left hover:bg-gray-50 transition"
+                className="w-full px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/saved')}
               >
                 <div className="flex items-center">
@@ -93,7 +93,7 @@ export default function HamburgerMenu() {
               </button>
               
               <button 
-                className="w-full px-5 py-3 text-left hover:bg-gray-50 transition"
+                className="w-full px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 onClick={() => handleNavigation('/profile')}
               >
                 <div className="flex items-center">
@@ -106,7 +106,7 @@ export default function HamburgerMenu() {
               
               <div className="border-t border-gray-100 mt-4 pt-2">
                 <button 
-                  className="w-full px-5 py-3 text-left hover:bg-gray-50 transition"
+                  className="w-full px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                   onClick={() => handleNavigation('/help')}
                 >
                   <div className="flex items-center">
@@ -118,7 +118,7 @@ export default function HamburgerMenu() {
                 </button>
                 
                 <button 
-                  className="w-full px-5 py-3 text-left hover:bg-gray-50 transition"
+                  className="w-full px-5 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                   onClick={() => handleNavigation('/settings')}
                 >
                   <div className="flex items-center">

@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect, useMemo } from "react";
 
-// Sample trip data
+// Sample trip data with prices in consistent format
 const initialTrips = [
   {
     id: 1,
@@ -12,7 +12,8 @@ const initialTrips = [
     description: "One of Brazil's most iconic cities, renowned for its beaches and mountains.",
     category: "South America",
     liked: false,
-    price: "$489/person"
+    price: "$489",
+    priceValue: 489
   },
   {
     id: 2,
@@ -24,7 +25,8 @@ const initialTrips = [
     description: "8 days tour exploring Brazil's incredible landscapes and culture.",
     category: "South America",
     liked: false,
-    price: "$659/person"
+    price: "$659",
+    priceValue: 659
   },
   {
     id: 3,
@@ -36,7 +38,8 @@ const initialTrips = [
     description: "Discover the most beautiful beaches along Brazil's coastline.",
     category: "South America",
     liked: false,
-    price: "$529/person"
+    price: "$529",
+    priceValue: 529
   },
   {
     id: 4,
@@ -48,7 +51,8 @@ const initialTrips = [
     description: "Experience the vibrant culture and delicious cuisine of Bangkok.",
     category: "Asia",
     liked: false,
-    price: "$449/person"
+    price: "$449",
+    priceValue: 449
   },
   {
     id: 5,
@@ -60,7 +64,8 @@ const initialTrips = [
     description: "Explore the romantic streets and iconic landmarks of Paris.",
     category: "Europe",
     liked: false,
-    price: "$789/person"
+    price: "$789",
+    priceValue: 789
   },
   {
     id: 6,
@@ -72,7 +77,8 @@ const initialTrips = [
     description: "Witness the incredible wildlife of Kenya on this safari adventure.",
     category: "Africa",
     liked: false,
-    price: "$899/person"
+    price: "$899",
+    priceValue: 899
   }
 ];
 
@@ -125,13 +131,12 @@ export const AppProvider = ({ children }) => {
   });
 
   // Selected category state
-  const [activeCategory, setActiveCategory] = useState("South America");
+  const [activeCategory, setActiveCategory] = useState("All");
   
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   
-  // Add sort state
+  // Sort state with proper sorting logic
   const [sortBy, setSortBy] = useState("recommended");
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMainMenu, setShowMainMenu] = useState(false);
@@ -141,16 +146,41 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('trips', JSON.stringify(trips));
   }, [trips]);
   
-  // Filter trips by category and search query
-  const filteredTrips = trips.filter(trip => {
-    const matchesCategory = activeCategory === "All" || trip.category === activeCategory;
-    const matchesSearch = searchQuery === "" || 
-      trip.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      trip.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      trip.description.toLowerCase().includes(searchQuery.toLowerCase());
+  // Use useMemo to compute filtered and sorted trips only when dependencies change
+  const processedTrips = useMemo(() => {
+    console.log("Recomputing processed trips with sort:", sortBy);
     
-    return matchesCategory && matchesSearch;
-  });
+    // First, filter trips
+    const filtered = trips.filter(trip => {
+      const matchesCategory = activeCategory === "All" || trip.category === activeCategory;
+      const matchesSearch = searchQuery === "" || 
+        trip.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        trip.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        trip.description.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      return matchesCategory && matchesSearch;
+    });
+    
+    // Then sort the filtered trips
+    return filtered.sort((a, b) => {
+      switch(sortBy) {
+        case "price-low":
+          return a.priceValue - b.priceValue;
+        case "price-high": 
+          return b.priceValue - a.priceValue;
+        case "rating":
+          return b.rating - a.rating;
+        case "reviews":
+          return b.reviews - a.reviews;
+        case "recommended":
+        default:
+          // For recommended, prioritize high ratings and reasonable prices
+          const aScore = a.rating * 20 - (a.priceValue / 100);
+          const bScore = b.rating * 20 - (b.priceValue / 100);
+          return bScore - aScore;
+      }
+    });
+  }, [trips, activeCategory, searchQuery, sortBy]);
   
   // Toggle like status for a trip
   const toggleLike = (tripId) => {
@@ -171,36 +201,36 @@ export const AppProvider = ({ children }) => {
     setSearchQuery(query);
   };
   
-  // Add trip to saved trips
-  const saveTrip = (tripId) => {
-    if (!user.savedTrips.includes(tripId)) {
-      setUser({
-        ...user,
-        savedTrips: [...user.savedTrips, tripId]
-      });
-    }
-  };
+  // Toggle menus
+  const toggleUserMenu = () => setShowUserMenu(!showUserMenu);
+  const closeUserMenu = () => setShowUserMenu(false);
   
-  // Remove trip from saved trips
-  const unsaveTrip = (tripId) => {
-    setUser({
-      ...user,
-      savedTrips: user.savedTrips.filter(id => id !== tripId)
-    });
-  };
+  const toggleMainMenu = () => setShowMainMenu(!showMainMenu);
+  const closeMainMenu = () => setShowMainMenu(false);
+  
+  // Debug sorting
+  useEffect(() => {
+    console.log("Sort by changed to:", sortBy);
+  }, [sortBy]);
   
   return (
     <AppContext.Provider value={{
       user,
-      trips: filteredTrips,
+      trips: processedTrips, // Use the memoized processed trips
       activeCategory,
       setActiveCategory,
       searchQuery,
       handleSearch,
       toggleLike,
       getTripDetails,
-      saveTrip,
-      unsaveTrip
+      sortBy,
+      setSortBy,
+      showUserMenu,
+      toggleUserMenu,
+      closeUserMenu,
+      showMainMenu,
+      toggleMainMenu,
+      closeMainMenu
     }}>
       {children}
     </AppContext.Provider>
