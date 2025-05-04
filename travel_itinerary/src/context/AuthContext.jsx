@@ -35,53 +35,53 @@ export function AuthProvider({ children }) {
 
   // Signup function - fixed parameter order to match component calls
   async function signup(name, email, password) {
-    setLoading(true);
-    setError("");
-    
-    try {
-      const response = await axios.post(`${API_URL}/auth/signup`, {
-        name,
-        email,
-        password
-      });
-      setCurrentUser(response.data.user);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      if (response.data.user.token) {
-        localStorage.setItem('token', response.data.user.token); // <-- ADD THIS
-      }
-      return response.data.user;
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to signup');
-      throw err;
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  setError("");
+  try {
+    const response = await axios.post(`${API_URL}/auth/signup`, {
+      name,
+      email,
+      password
+    });
+    setCurrentUser(response.data.user);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+    if (response.data.user.token) {
+      localStorage.setItem('token', response.data.user.token); // <-- ADD THIS LINE
     }
+    return response.data.user;
+  } catch (err) {
+    setError(err.response?.data?.message || 'Failed to signup');
+    throw err;
+  } finally {
+    setLoading(false);
   }
+}
+
   
 
   // Login function
   async function login(email, password) {
-    setLoading(true);
-    setError("");
-    
-    try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password
-      });
-      setCurrentUser(response.data.user);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      if (response.data.user.token) {
-        localStorage.setItem('token', response.data.user.token); // <-- ADD THIS
-      }
-      return response.data.user;
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to login');
-      throw err;
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  setError("");
+  try {
+    const response = await axios.post(`${API_URL}/auth/login`, {
+      email,
+      password
+    });
+    setCurrentUser(response.data.user);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+    if (response.data.user.token) {
+      localStorage.setItem('token', response.data.user.token); // <-- ADD THIS LINE
     }
+    return response.data.user;
+  } catch (err) {
+    setError(err.response?.data?.message || 'Failed to login');
+    throw err;
+  } finally {
+    setLoading(false);
   }
+}
+
 
 
   // Logout function
