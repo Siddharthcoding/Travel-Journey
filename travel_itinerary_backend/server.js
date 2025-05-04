@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { router as authRoutes } from './src/routes/auth.js';
 import { router as tripRoutes } from './src/routes/trips.js';
 import { seedData } from './src/utils/seedData.js';
+import { Trip } from './src/models/Trip.js';
 
 dotenv.config();
 
