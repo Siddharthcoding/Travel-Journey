@@ -44,8 +44,11 @@ export function AuthProvider({ children }) {
         email,
         password
       });
-      
       setCurrentUser(response.data.user);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      if (response.data.user.token) {
+        localStorage.setItem('token', response.data.user.token); // <-- ADD THIS
+      }
       return response.data.user;
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to signup');
@@ -54,6 +57,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   }
+  
 
   // Login function
   async function login(email, password) {
@@ -65,8 +69,11 @@ export function AuthProvider({ children }) {
         email,
         password
       });
-      
       setCurrentUser(response.data.user);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      if (response.data.user.token) {
+        localStorage.setItem('token', response.data.user.token); // <-- ADD THIS
+      }
       return response.data.user;
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to login');
@@ -76,10 +83,14 @@ export function AuthProvider({ children }) {
     }
   }
 
+
   // Logout function
   function logout() {
     setCurrentUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('token'); // <-- ADD THIS
   }
+  
   
   // Update user profile
   async function updateUserProfile(userData) {

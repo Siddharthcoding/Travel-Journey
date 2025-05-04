@@ -19,25 +19,29 @@ import { authMiddleware } from '../middleware/auth.js';
 
 export const router = express.Router();
 
-// Public routes
-router.get('/', getAllTrips);
+// --- Booking routes (STATIC, place BEFORE /:id) ---
+router.get('/bookings', authMiddleware, getUserBookings);
+router.get('/bookings/:bookingId', authMiddleware, getBookingDetails);
+router.post('/bookings/:bookingId/cancel', authMiddleware, cancelBooking);
+router.post('/:id/book', authMiddleware, bookTrip);
+
+// --- Other static routes ---
 router.get('/search', searchTrips);
 router.get('/category/:category', getTripsByCategory);
 router.get('/country/:country', getTripsByCountry);
-router.get('/:id', getTripById);
 
-// Protected routes
+// --- Public routes ---
+router.get('/', getAllTrips);
+
+// --- Protected routes for trip CRUD ---
 router.post('/', authMiddleware, createTrip);
 router.put('/:id', authMiddleware, updateTrip);
 router.delete('/:id', authMiddleware, deleteTrip);
 
-// Booking routes
-router.post('/:id/book', authMiddleware, bookTrip);
-router.get('/bookings', authMiddleware, getUserBookings);
-router.get('/bookings/:bookingId', authMiddleware, getBookingDetails);
-router.post('/bookings/:bookingId/cancel', authMiddleware, cancelBooking);
+// --- Parameterized route LAST (to avoid conflicts) ---
+router.get('/:id', getTripById);
 
-
+// --- Test email route (can be anywhere after static routes) ---
 router.post('/test-email', authMiddleware, async (req, res) => {
   try {
     // Create a test email
