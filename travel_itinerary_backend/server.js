@@ -4,7 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { router as authRoutes } from './src/routes/auth.js';
 import { router as tripRoutes } from './src/routes/trips.js';
-import { seedData } from './seedData.js';
+import { seedData } from './src/utils/seedData.js';
 
 dotenv.config();
 
