@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors(https://travel-journey-backend.onrender.com));
 app.use(express.json());
 
 
