@@ -506,3 +506,4 @@ const seedDatabase = async () => {
 
 // Run seeder
 seedDatabase(); 
+export const seedData = tripData;
