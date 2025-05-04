@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors(https://trip-glide.onrender.com));
+app.use(cors({ origin: 'https://trip-glide.onrender.com' }));
 app.use(express.json());
 
 
