@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppContext } from "../context/AppContext";
+import { tripAPI } from "../services/api";
 import BottomNav from "./BottomNav";
 
 export default function TripDetails() {
@@ -28,6 +29,7 @@ export default function TripDetails() {
   const [isBooking, setIsBooking] = useState(false);
   const [bookingError, setBookingError] = useState("");
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingReference, setBookingReference] = useState("");
   
   const tabs = ["Tour schedule", "Accommodation", "Booking details"];
   
@@ -86,12 +88,21 @@ export default function TripDetails() {
     setBookingError("");
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Calculate total price based on number of travelers
+      const totalPrice = trip.priceValue * bookingData.travelers;
       
-      // In a real app, you would call the API here:
-      // await tripAPI.bookTrip(trip._id, bookingData);
+      // Prepare booking data to send to API
+      const bookingPayload = {
+        ...bookingData,
+        totalPrice,
+        tripId: trip._id
+      };
       
+      // Call the API to book the trip
+      const response = await tripAPI.bookTrip(trip._id, bookingPayload);
+      
+      // Set booking reference from response
+      setBookingReference(response.bookingReference);
       setBookingSuccess(true);
       setBookingStep(3); // Move to confirmation step
     } catch (err) {
@@ -108,7 +119,42 @@ export default function TripDetails() {
       setBookingStep(1);
       setBookingSuccess(false);
       setBookingError("");
+      // Don't reset booking data if successful to allow for repeat bookings
+      if (!bookingSuccess) {
+        setBookingData({
+          travelers: 2,
+          date: "",
+          specialRequests: "",
+          contactEmail: "",
+          contactPhone: ""
+        });
+      }
     }, 300);
+  };
+  
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        timeZone: 'UTC' // Ensure consistent date interpretation
+      });
+    } catch (e) {
+      console.error("Date formatting error:", e);
+      return dateString;
+    }
+  };
+  
+  // Calculate total price
+  const calculateTotalPrice = () => {
+    if (!trip || !bookingData.travelers) return "0";
+    
+    const totalPrice = trip.priceValue * bookingData.travelers;
+    return `$${totalPrice.toLocaleString()}`;
   };
   
   // Improved loading state with skeleton UI
@@ -468,6 +514,7 @@ export default function TripDetails() {
                         onChange={handleBookingChange}
                         className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         required
+                        min={new Date().toISOString().split('T')[0]} // Prevent past dates
                       />
                     </div>
                     
@@ -490,7 +537,7 @@ export default function TripDetails() {
                       </select>
                     </div>
                     
-                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl mb-4">
                       <div className="flex items-center mb-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
@@ -505,6 +552,18 @@ export default function TripDetails() {
                         className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 h-24 resize-none"
                       />
                     </div>
+                    
+                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Total Price:</span>
+                        <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                          {calculateTotalPrice()}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {trip.price} × {bookingData.travelers} {bookingData.travelers === 1 ? 'traveler' : 'travelers'}
+                      </p>
+                    </div>
                   </div>
                   
                   <div className="flex justify-between">
@@ -518,7 +577,7 @@ export default function TripDetails() {
                     <motion.button
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
-                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium"
+                      className={`px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium ${!bookingData.date ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={nextBookingStep}
                       disabled={!bookingData.date}
                     >
@@ -572,12 +631,36 @@ export default function TripDetails() {
                       />
                     </div>
                     
-                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl mb-4">
                       <div className="flex items-start mb-2">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span className="text-sm">By proceeding, you agree to our <span className="text-emerald-600 dark:text-emerald-400">Terms & Conditions</span> and <span className="text-emerald-600 dark:text-emerald-400">Privacy Policy</span>.</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Booking Summary:</span>
+                      </div>
+                      <div className="mt-2 space-y-1 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-500 dark:text-gray-400">Trip:</span>
+                          <span>{trip.title}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500 dark:text-gray-400">Date:</span>
+                          <span>{formatDate(bookingData.date)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500 dark:text-gray-400">Travelers:</span>
+                          <span>{bookingData.travelers}</span>
+                        </div>
+                        <div className="flex justify-between font-medium pt-1 border-t border-gray-200 dark:border-gray-600 mt-1">
+                          <span>Total:</span>
+                          <span className="text-emerald-600 dark:text-emerald-400">{calculateTotalPrice()}</span>
+                        </div>
                       </div>
                     </div>
                     
@@ -599,7 +682,9 @@ export default function TripDetails() {
                     <motion.button
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
-                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center"
+                      className={`px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center ${
+                        isBooking || !bookingData.contactEmail || !bookingData.contactPhone ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
                       onClick={submitBooking}
                       disabled={isBooking || !bookingData.contactEmail || !bookingData.contactPhone}
                     >
@@ -645,7 +730,7 @@ export default function TripDetails() {
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-xl mb-4">
                       <div className="flex justify-between mb-2">
                         <span className="text-sm text-gray-500 dark:text-gray-400">Booking Reference:</span>
-                        <span className="text-sm font-medium">TRV-{Math.floor(Math.random() * 1000000)}</span>
+                        <span className="text-sm font-medium">{bookingReference || `TRV-${Math.floor(Math.random() * 1000000)}`}</span>
                       </div>
                       <div className="flex justify-between mb-2">
                         <span className="text-sm text-gray-500 dark:text-gray-400">Trip:</span>
@@ -653,23 +738,41 @@ export default function TripDetails() {
                       </div>
                       <div className="flex justify-between mb-2">
                         <span className="text-sm text-gray-500 dark:text-gray-400">Date:</span>
-                        <span className="text-sm font-medium">{new Date(bookingData.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        <span className="text-sm font-medium">{formatDate(bookingData.date)}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between mb-2">
                         <span className="text-sm text-gray-500 dark:text-gray-400">Travelers:</span>
                         <span className="text-sm font-medium">{bookingData.travelers}</span>
                       </div>
+                      <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-600 mt-2">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Total Price:</span>
+                        <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">{calculateTotalPrice()}</span>
+                      </div>
                     </div>
+                    
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                      You can view your booking details and manage your reservation in your account under "My Trips".
+                    </p>
                   </div>
                   
-                  <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium"
-                    onClick={closeBookingModal}
-                  >
-                    Done
-                  </motion.button>
+                  <div className="flex space-x-3">
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="flex-1 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg font-medium"
+                      onClick={() => navigate("/saved")}
+                    >
+                      View My Trips
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium"
+                      onClick={closeBookingModal}
+                    >
+                      Done
+                    </motion.button>
+                  </div>
                 </motion.div>
               )}
             </motion.div>

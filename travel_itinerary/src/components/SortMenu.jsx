@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAppContext } from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
 
 export default function SortMenu({ isOpen, onClose }) {
-  const { sortBy, setSortBy } = useAppContext();
+  const { sortBy, setSortBy } = useContext(AppContext);
 
   const handleSort = (sortOption) => {
     console.log("Setting sort to:", sortOption);

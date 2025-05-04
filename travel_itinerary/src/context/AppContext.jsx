@@ -253,7 +253,7 @@ const sampleTrips = [
 ];
 
 // Create context
-const AppContext = createContext();
+export const AppContext = createContext();
 
 export const useAppContext = () => useContext(AppContext);
 

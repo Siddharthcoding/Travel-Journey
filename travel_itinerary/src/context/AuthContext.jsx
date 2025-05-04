@@ -80,12 +80,123 @@ export function AuthProvider({ children }) {
   function logout() {
     setCurrentUser(null);
   }
+  
+  // Update user profile
+  async function updateUserProfile(userData) {
+    setLoading(true);
+    setError("");
+    
+    try {
+      // Get token from current user
+      const token = currentUser?.token;
+      
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+      
+      const response = await axios.put(
+        `${API_URL}/auth/profile`, 
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
+      // Update current user with new data
+      setCurrentUser(prev => ({
+        ...prev,
+        ...response.data.user
+      }));
+      
+      return response.data.user;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update profile');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  // Change password
+  async function changePassword(currentPassword, newPassword) {
+    setLoading(true);
+    setError("");
+    
+    try {
+      // Get token from current user
+      const token = currentUser?.token;
+      
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+      
+      const response = await axios.put(
+        `${API_URL}/auth/change-password`, 
+        { currentPassword, newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to change password');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  // Update notification preferences
+  async function updateNotificationPreferences(preferences) {
+    setLoading(true);
+    setError("");
+    
+    try {
+      // Get token from current user
+      const token = currentUser?.token;
+      
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+      
+      const response = await axios.put(
+        `${API_URL}/auth/notifications`, 
+        { preferences },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
+      // Update current user with new preferences
+      setCurrentUser(prev => ({
+        ...prev,
+        notificationPreferences: preferences
+      }));
+      
+      return response.data;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update notification preferences');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const value = {
     currentUser,
     signup,
     login,
     logout,
+    updateUserProfile,
+    changePassword,
+    updateNotificationPreferences,
     loading,
     error
   };

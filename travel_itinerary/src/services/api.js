@@ -149,6 +149,62 @@ export const tripAPI = {
       console.error("Error booking trip:", error);
       throw error.response?.data || { message: 'Error booking trip' };
     }
+  },
+  
+  getUserBookings: async () => {
+    try {
+      const response = await api.get('/trips/bookings');
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      throw error.response?.data || { message: 'Error fetching bookings' };
+    }
+  },
+  
+  cancelBooking: async (bookingId) => {
+    try {
+      const response = await api.post(`/trips/bookings/${bookingId}/cancel`);
+      return response.data;
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      throw error.response?.data || { message: 'Error cancelling booking' };
+    }
+  },
+
+  updateProfile: async (userData) => {
+    try {
+      const response = await api.put('/auth/profile', userData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Error updating profile' };
+    }
+  },
+  
+  changePassword: async (passwordData) => {
+    try {
+      const response = await api.put('/auth/change-password', passwordData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Error changing password' };
+    }
+  },
+  
+  updateNotifications: async (preferences) => {
+    try {
+      const response = await api.put('/auth/notifications', { preferences });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Error updating notification preferences' };
+    }
+  },
+  
+  updatePaymentMethod: async (paymentData) => {
+    try {
+      const response = await api.put('/auth/payment-method', paymentData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Error updating payment method' };
+    }
   }
 };
 

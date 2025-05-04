@@ -17,6 +17,7 @@ import DestinationView from "./components/DestinationView";
 import SavedTrips from "./components/SavedTrips";
 import Profile from "./components/Profile";
 import Settings from "./components/Settings";
+import YourTrips from "./components/YourTrips";
 
 export default function App() {
   return (
@@ -45,6 +46,11 @@ export default function App() {
                 <Route path="/destination/:id" element={
                   <ProtectedRoute>
                     <DestinationView />
+                  </ProtectedRoute>
+                } />
+                <Route path="/yourTrips" element={
+                  <ProtectedRoute>
+                    <YourTrips />
                   </ProtectedRoute>
                 } />
                 <Route path="/saved" element={

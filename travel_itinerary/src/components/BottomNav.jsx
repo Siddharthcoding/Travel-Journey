@@ -32,7 +32,7 @@ export default function BottomNav({ active }) {
         
         <motion.button 
           className="flex flex-col items-center"
-          onClick={() => navigate('/trips')}
+          onClick={() => navigate('/yourTrips')}
           whileTap={{ scale: 0.9 }}
         >
           <motion.div

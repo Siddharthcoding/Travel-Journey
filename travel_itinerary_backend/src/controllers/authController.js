@@ -98,3 +98,121 @@ export const getCurrentUser = async (req, res) => {
     res.status(500).json({ message: 'Error fetching user data' });
   }
 }; 
+
+
+// Update user profile
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
+    const userId = req.user.id;
+    
+    // Find user
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Update fields
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+    
+    await user.save();
+    
+    // Return updated user data (excluding password)
+    res.json({
+      message: 'Profile updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        avatar: user.avatar
+      }
+    });
+  } catch (err) {
+    console.error('Update profile error:', err);
+    res.status(500).json({ message: 'Error updating profile' });
+  }
+};
+
+// Change password
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+    
+    // Find user
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+    
+    // Update password
+    user.password = newPassword;
+    await user.save();
+    
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error('Change password error:', err);
+    res.status(500).json({ message: 'Error changing password' });
+  }
+};
+
+// Update notification preferences
+export const updateNotifications = async (req, res) => {
+  try {
+    const { preferences } = req.body;
+    const userId = req.user.id;
+    
+    // Find user
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Update notification preferences
+    user.notificationPreferences = preferences;
+    await user.save();
+    
+    res.json({
+      message: 'Notification preferences updated successfully',
+      preferences: user.notificationPreferences
+    });
+  } catch (err) {
+    console.error('Update notifications error:', err);
+    res.status(500).json({ message: 'Error updating notification preferences' });
+  }
+};
+
+// Update payment method
+export const updatePaymentMethod = async (req, res) => {
+  try {
+    const { paymentMethod } = req.body;
+    const userId = req.user.id;
+    
+    // Find user
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // For this example, we'll just acknowledge the request
+    res.json({
+      message: 'Payment method updated successfully'
+    });
+  } catch (err) {
+    console.error('Update payment method error:', err);
+    res.status(500).json({ message: 'Error updating payment method' });
+  }
+};
