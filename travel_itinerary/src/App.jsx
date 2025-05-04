@@ -11,7 +11,6 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 
 // Protected pages
-import Onboarding from "./components/Onboarding";
 import Home from "./components/Home";
 import TripDetails from "./components/TripDetails";
 import DestinationView from "./components/DestinationView";
@@ -33,11 +32,6 @@ export default function App() {
                 <Route path="/signup" element={<Signup />} />
                 
                 {/* Protected routes */}
-                <Route path="/onboarding" element={
-                  <ProtectedRoute>
-                    <Onboarding />
-                  </ProtectedRoute>
-                } />
                 <Route path="/home" element={
                   <ProtectedRoute>
                     <Home />
@@ -78,4 +72,4 @@ export default function App() {
       </AppProvider>
     </AuthProvider>
   );
-} 
+}

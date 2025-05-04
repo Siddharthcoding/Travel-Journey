@@ -44,7 +44,8 @@ export default function Signup() {
     
     try {
       await signup(name, email, password);
-      navigate('/onboarding');
+      // Navigate directly to home instead of onboarding
+      navigate('/login');
     } catch (err) {
       setFormError(err.response?.data?.message || 'Failed to create account');
     } finally {
@@ -74,7 +75,7 @@ export default function Signup() {
               {travelImages.slice(0, 5).map(image => (
                 <div 
                   key={image.id} 
-                  className="mb-1 h-[250px] md:h-[350px]" 
+                  className="mb-1 h-[250px] md:h-[350px]"
                 >
                   <img 
                     src={`${image.src}?w=800&q=80`} 
@@ -212,7 +213,6 @@ export default function Signup() {
                 <span className="text-xs uppercase tracking-[0.25em] text-emerald-300 font-bold mx-3">Join Us</span>
                 <div className="h-px w-16 bg-emerald-400/40"></div>
               </div>
-              
               <h1 className="text-5xl md:text-6xl font-black text-white mb-1 tracking-tight">
                 BEGIN YOUR <span className="text-emerald-400 font-extrabold italic">STORY</span>
               </h1>
@@ -326,4 +326,4 @@ export default function Signup() {
       </div>
     </div>
   );
-} 
+}

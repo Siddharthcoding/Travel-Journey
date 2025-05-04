@@ -1,97 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 import BottomNav from "./BottomNav";
-
-// Mock data for destinations
-const destinationsData = {
-  1: {
-    id: 1,
-    name: "Bali",
-    country: "Indonesia",
-    tagline: "Where Culture Meets Tranquility",
-    description: "Discover what makes this island so unique",
-    rating: 4.8,
-    reviews: 124,
-    images: [
-      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&auto=format",
-      "https://images.unsplash.com/photo-1573790387438-4da905039392?q=80&auto=format",
-      "https://images.unsplash.com/photo-1588048516328-54b17efa7116?q=80&auto=format",
-    ],
-    attractions: [
-      {
-        name: "Best of Bali",
-        type: "Bali Trip • Bali, Indonesia",
-        price: 700,
-        image: "https://images.unsplash.com/photo-1555400038-63f5ba517a47?q=80&auto=format"
-      }
-    ],
-    activities: [
-      {
-        name: "Rice Terraces",
-        image: "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?q=80&auto=format"
-      },
-      {
-        name: "Temples",
-        image: "https://images.unsplash.com/photo-1517358150039-8d8603789cc8?q=80&auto=format"
-      },
-      {
-        name: "Beaches",
-        image: "https://images.unsplash.com/photo-1588843363338-02613de2f4d3?q=80&auto=format"
-      }
-    ]
-  },
-  2: {
-    id: 2,
-    name: "Rio de Janeiro",
-    country: "Brazil",
-    tagline: "Where Rhythm Meets Nature",
-    description: "Experience the vibrant culture of this remarkable city",
-    rating: 4.6,
-    reviews: 98,
-    images: [
-      "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&auto=format",
-      "https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?q=80&auto=format",
-      "https://images.unsplash.com/photo-1591456983933-9a341badae46?q=80&auto=format",
-    ],
-    attractions: [
-      {
-        name: "Rio Highlights",
-        type: "City Tour • Rio, Brazil",
-        price: 650,
-        image: "https://images.unsplash.com/photo-1619546952812-520e98064a52?q=80&auto=format"
-      }
-    ],
-    activities: [
-      {
-        name: "Christ the Redeemer",
-        image: "https://images.unsplash.com/photo-1544989164-21587b410bc3?q=80&auto=format"
-      },
-      {
-        name: "Sugarloaf Mountain",
-        image: "https://images.unsplash.com/photo-1564659907532-6b5f98c8e70f?q=80&auto=format"
-      },
-      {
-        name: "Copacabana Beach",
-        image: "https://images.unsplash.com/photo-1619895092538-128341789043?q=80&auto=format"
-      }
-    ]
-  }
-};
 
 export default function DestinationView() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { getTripDetails, loading } = useAppContext();
+  const [destination, setDestination] = useState(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [likedActivities, setLikedActivities] = useState([]);
+  const [error, setError] = useState(null);
   
-  // Get destination data
-  const destination = destinationsData[id] || destinationsData[1]; // Fallback to Bali if ID not found
+  useEffect(() => {
+    const fetchDestination = async () => {
+      try {
+        const tripData = await getTripDetails(id);
+        if (tripData) {
+          // Transform trip data to match the destination format
+          setDestination({
+            id: tripData._id,
+            name: tripData.title,
+            country: tripData.country,
+            continent: tripData.category,
+            tagline: tripData.subtitle || `${tripData.days}-Day Adventure in ${tripData.country}`,
+            description: tripData.description,
+            rating: tripData.rating,
+            reviews: tripData.reviews,
+            images: [
+              tripData.image,
+              // Add placeholder images if needed
+              "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&auto=format",
+              "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&auto=format",
+            ],
+            attractions: [
+              {
+                name: tripData.title,
+                type: `${tripData.category} Tour • ${tripData.country}`,
+                price: tripData.priceValue,
+                image: tripData.image
+              }
+            ],
+            activities: tripData.itinerary && tripData.itinerary.length > 0 
+              ? tripData.itinerary.slice(0, 3).map(day => ({
+                  name: day.title,
+                  image: "https://images.unsplash.com/photo-1543349689-9a4d426bee8e?q=80&auto=format"
+                }))
+              : [
+                  {
+                    name: "Explore " + tripData.country,
+                    image: "https://images.unsplash.com/photo-1543349689-9a4d426bee8e?q=80&auto=format"
+                  },
+                  {
+                    name: "Local Cuisine",
+                    image: "https://images.unsplash.com/photo-1565099824688-e93eb20fe622?q=80&auto=format"
+                  },
+                  {
+                    name: "Cultural Experience",
+                    image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&auto=format"
+                  }
+                ]
+          });
+        } else {
+          setError("Destination not found");
+        }
+      } catch (err) {
+        console.error("Error fetching destination:", err);
+        setError("Failed to load destination details");
+      }
+    };
+    
+    fetchDestination();
+  }, [id, getTripDetails]);
   
   const nextImage = () => {
+    if (!destination) return;
     setCurrentImage((prev) => (prev === destination.images.length - 1 ? 0 : prev + 1));
   };
   
   const prevImage = () => {
+    if (!destination) return;
     setCurrentImage((prev) => (prev === 0 ? destination.images.length - 1 : prev - 1));
   };
   
@@ -102,6 +90,28 @@ export default function DestinationView() {
       setLikedActivities([...likedActivities, activityName]);
     }
   };
+  
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      </div>
+    );
+  }
+  
+  if (error || !destination) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-500">{error || "Destination not found"}</p>
+        <button 
+          onClick={() => navigate("/home")}
+          className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded-lg"
+        >
+          Return to Home
+        </button>
+      </div>
+    );
+  }
   
   return (
     <div className="pb-20">
@@ -115,7 +125,7 @@ export default function DestinationView() {
         />
         
         {/* Back button */}
-        <button 
+        <button
           className="absolute top-4 left-4 z-20 bg-white/30 backdrop-blur-sm rounded-full p-2"
           onClick={() => navigate(-1)}
         >
@@ -242,7 +252,7 @@ export default function DestinationView() {
         </div>
       </div>
       
-      <BottomNav />
+      <BottomNav active="trips" />
     </div>
   );
-} 
+}

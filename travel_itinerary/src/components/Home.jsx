@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppContext } from "../context/AppContext";
+import ThemeToggle from "./ThemeToggle";
 import BottomNav from "./BottomNav";
 import SortMenu from "./SortMenu";
 
@@ -16,8 +17,9 @@ export default function Home() {
     searchQuery,
     toggleLike,
     sortBy,
-    loading
-  } = useAppContext();
+    loading,
+    error
+  } = useAppContext();  
   
   const [showSortMenu, setShowSortMenu] = useState(false);
   const categories = ["All", "Asia", "Europe", "South America", "North America", "Africa", "Oceania"];
@@ -59,7 +61,7 @@ export default function Home() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="bg-white dark:bg-dark-card rounded-3xl overflow-hidden shadow-md min-w-[270px] flex-shrink-0 mx-2 mb-2"
+      className="bg-white dark:bg-dark-card rounded-3xl overflow-hidden shadow-md min-w-[240px] w-[calc(100vw-80px)] sm:w-auto max-w-[300px] flex-shrink-0 mx-2 mb-2"
     >
       <div className="relative">
         <img 
@@ -123,19 +125,22 @@ export default function Home() {
   );
   
   return (
-    <div className="pb-24">
+    <div className="pb-24 overflow-x-hidden">
       {/* Header */}
       <div className="px-5 pt-4">
-        <div className="border-l-4 border-emerald-500 pl-3 mb-6">
-          <p className="text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold">Welcome Back</p>
-          <h2 className="text-3xl font-extrabold tracking-tight">
-            <span className="text-black dark:text-white">Hello, </span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-black italic">{user.name}</span>
-          </h2>
-          <div className="flex items-center space-x-2 mt-1">
-            <div className="h-px w-6 bg-emerald-500/40"></div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 font-light italic">Discover your next adventure</p>
+        <div className="flex justify-between items-center mb-6">
+          <div className="border-l-4 border-emerald-500 pl-3">
+            <p className="text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold">WELCOME BACK</p>
+            <h2 className="text-3xl font-extrabold tracking-tight">
+              <span className="text-black dark:text-white">Hello, </span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-black italic">{user?.name || 'New User'}</span>
+            </h2>
+            <div className="flex items-center space-x-2 mt-1">
+              <div className="h-px w-6 bg-emerald-500/40"></div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-light italic">Discover your next adventure</p>
+            </div>
           </div>
+          <ThemeToggle />
         </div>
         
         {/* Search */}
@@ -185,7 +190,7 @@ export default function Home() {
         {/* Categories */}
         <div className="mt-8 mb-3 flex items-center justify-between">
           <h3 className="text-base uppercase tracking-wide font-bold text-gray-800 dark:text-gray-200">
-            <span className="text-emerald-600 dark:text-emerald-400 mr-1">—</span>
+            <span className="text-emerald-600 dark:text-emerald-400 mr-1">-</span>
             Explore Categories
           </h3>
           <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">View All</p>
@@ -213,6 +218,21 @@ export default function Home() {
       {loading && (
         <div className="flex justify-center items-center py-10">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-500"></div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {error && (
+        <div className="text-center py-10 px-5">
+          <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl">
+            <p className="text-red-600 dark:text-red-400">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="mt-3 px-4 py-2 bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-300 rounded-lg text-sm font-medium"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       )}
 
@@ -278,23 +298,23 @@ export default function Home() {
                   </motion.button>
                 </div>
                 
-                <div className="overflow-x-auto flex -mx-5 px-3 pb-4 scrollbar-hide">
+                <div className="overflow-x-auto flex -mx-5 px-3 pb-4 scrollbar-hide max-w-full">
                   {continentTrips.map((trip, index) => renderTripCard(trip, index))}
                 </div>
               </div>
             );
           })}
           
-          {/* Explore by Interest section */}
+          {/* Explore by Interest section - FIXED */}
           <div className="px-5 mt-6 mb-10">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-extrabold tracking-tight">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
+              <h2 className="text-xl font-extrabold tracking-tight mb-2 sm:mb-0">
                 <span className="italic font-light">Explore by</span> 
                 <span className="text-emerald-600 dark:text-emerald-400 ml-1">Interest</span>
               </h2>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 w-full overflow-hidden">
               {[
                 { name: "Beach Getaways", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&auto=format" },
                 { name: "Mountain Adventures", image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&auto=format" },
@@ -330,4 +350,4 @@ export default function Home() {
       <BottomNav active="home" />
     </div>
   );
-} 
+}

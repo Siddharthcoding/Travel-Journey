@@ -33,16 +33,16 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
-  // Signup function
-  async function signup(email, password, name) {
+  // Signup function - fixed parameter order to match component calls
+  async function signup(name, email, password) {
     setLoading(true);
     setError("");
     
     try {
       const response = await axios.post(`${API_URL}/auth/signup`, {
+        name,
         email,
-        password,
-        name
+        password
       });
       
       setCurrentUser(response.data.user);
@@ -95,4 +95,4 @@ export function AuthProvider({ children }) {
       {!loading && children}
     </AuthContext.Provider>
   );
-} 
+}

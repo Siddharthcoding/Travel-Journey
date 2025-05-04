@@ -62,15 +62,17 @@ export const tripAPI = {
       const response = await api.get('/trips');
       return response.data;
     } catch (error) {
-      throw error.response?.data || { message: 'Error fetching trips' };
+      console.error("Error fetching trips:", error);
+      return { trips: [] };
     }
-  },
+  },  
   
   getTripById: async (id) => {
     try {
       const response = await api.get(`/trips/${id}`);
       return response.data;
     } catch (error) {
+      console.error("Error fetching trip details:", error);
       throw error.response?.data || { message: 'Error fetching trip details' };
     }
   },
@@ -127,7 +129,27 @@ export const tripAPI = {
     } catch (error) {
       throw error.response?.data || { message: 'Error deleting trip' };
     }
+  },
+  
+  toggleSaveTrip: async (tripId) => {
+    try {
+      const response = await api.post(`/trips/${tripId}/toggle-save`);
+      return response.data;
+    } catch (error) {
+      console.error("Error toggling save trip:", error);
+      throw error.response?.data || { message: 'Error saving trip' };
+    }
+  },
+  
+  bookTrip: async (tripId, bookingData) => {
+    try {
+      const response = await api.post(`/trips/${tripId}/book`, bookingData);
+      return response.data;
+    } catch (error) {
+      console.error("Error booking trip:", error);
+      throw error.response?.data || { message: 'Error booking trip' };
+    }
   }
 };
 
-export default api; 
+export default api;
