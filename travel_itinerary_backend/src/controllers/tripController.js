@@ -1,4 +1,5 @@
 import { Trip } from '../models/Trip.js';
+import { User } from '../models/User.js';
 
 // Get all trips
 export const getAllTrips = async (req, res) => {
@@ -176,3 +177,31 @@ export const searchTrips = async (req, res) => {
     res.status(500).json({ message: 'Error searching trips' });
   }
 }; 
+
+export const toggleSaveTrip = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const tripId = req.params.id;
+
+    // Load user
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Toggle
+    const idx = user.bookings.indexOf(tripId);
+    let saved;
+    if (idx > -1) {
+      user.bookings.splice(idx, 1);
+      saved = false;
+    } else {
+      user.bookings.push(tripId);
+      saved = true;
+    }
+    await user.save();
+
+    res.json({ success: true, saved });
+  } catch (err) {
+    console.error('Error toggling save trip:', err);
+    res.status(500).json({ message: 'Error saving trip' });
+  }
+};

@@ -1,13 +1,14 @@
 import express from 'express';
 import { 
-  getAllTrips, 
-  getTripById, 
-  createTrip, 
-  updateTrip, 
+  getAllTrips,
+  getTripById,
+  createTrip,
+  updateTrip,
   deleteTrip,
   getTripsByCategory,
   getTripsByCountry,
-  searchTrips
+  searchTrips,
+  toggleSaveTrip              // ← import this
 } from '../controllers/tripController.js';
 import {
   bookTrip,
@@ -19,46 +20,25 @@ import { authMiddleware } from '../middleware/auth.js';
 
 export const router = express.Router();
 
-// --- Booking routes (STATIC, place BEFORE /:id) ---
+// BOOKING & SAVE routes (static, must come BEFORE /:id)
 router.get('/bookings', authMiddleware, getUserBookings);
 router.get('/bookings/:bookingId', authMiddleware, getBookingDetails);
 router.post('/bookings/:bookingId/cancel', authMiddleware, cancelBooking);
 router.post('/:id/book', authMiddleware, bookTrip);
+router.post('/:id/toggle-save', authMiddleware, toggleSaveTrip);  // ← new
 
-// --- Other static routes ---
+// OTHER static
 router.get('/search', searchTrips);
 router.get('/category/:category', getTripsByCategory);
 router.get('/country/:country', getTripsByCountry);
 
-// --- Public routes ---
+// PUBLIC list
 router.get('/', getAllTrips);
 
-// --- Protected routes for trip CRUD ---
+// PROTECTED CRUD
 router.post('/', authMiddleware, createTrip);
 router.put('/:id', authMiddleware, updateTrip);
 router.delete('/:id', authMiddleware, deleteTrip);
 
-// --- Parameterized route LAST (to avoid conflicts) ---
+// PARAM route last
 router.get('/:id', getTripById);
-
-// --- Test email route (can be anywhere after static routes) ---
-router.post('/test-email', authMiddleware, async (req, res) => {
-  try {
-    // Create a test email
-    const info = await transporter.sendMail({
-      from: `"Travel App" <${process.env.EMAIL_USER}>`,
-      to: req.body.email || req.user.email,
-      subject: "Test Email",
-      html: "<b>This is a test email from your Travel App!</b>"
-    });
-    
-    res.status(200).json({
-      success: true,
-      message: 'Test email sent successfully',
-      messageId: info.messageId
-    });
-  } catch (err) {
-    console.error('Error sending test email:', err);
-    res.status(500).json({ message: 'Error sending test email', error: err.message });
-  }
-});
