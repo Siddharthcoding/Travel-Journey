@@ -1,3 +1,4 @@
+// src/controllers/tripController.js
 import { Trip } from '../models/Trip.js';
 import { User } from '../models/User.js';
 
@@ -16,14 +17,10 @@ export const getAllTrips = async (req, res) => {
 export const getTripById = async (req, res) => {
   try {
     const trip = await Trip.findById(req.params.id);
-    
-    if (!trip) {
-      return res.status(404).json({ message: 'Trip not found' });
-    }
-    
+    if (!trip) return res.status(404).json({ message: 'Trip not found' });
     res.json({ trip });
   } catch (err) {
-    console.error('Error fetching trip:', err);
+    console.error('Error fetching trip details:', err);
     res.status(500).json({ message: 'Error fetching trip details' });
   }
 };
@@ -31,42 +28,17 @@ export const getTripById = async (req, res) => {
 // Create new trip
 export const createTrip = async (req, res) => {
   try {
-    const {
-      title,
-      country,
-      image,
-      subtitle,
-      description,
-      category,
-      days,
-      price,
-      priceValue,
-      itinerary
-    } = req.body;
-    
-    // Create new trip
+    const { title, country, image, subtitle, description,
+            category, days, price, priceValue, itinerary } = req.body;
     const trip = new Trip({
-      title,
-      country,
-      image,
-      subtitle,
-      description,
-      category,
-      days,
-      price,
-      priceValue,
-      itinerary,
+      title, country, image, subtitle, description,
+      category, days, price, priceValue, itinerary,
       author: req.user.id
     });
-    
     await trip.save();
-    
-    res.status(201).json({
-      message: 'Trip created successfully',
-      trip
-    });
+    res.status(201).json({ message: 'Trip created successfully', trip });
   } catch (err) {
-    console.error('Create trip error:', err);
+    console.error('Error creating trip:', err);
     res.status(500).json({ message: 'Error creating trip' });
   }
 };
@@ -75,30 +47,14 @@ export const createTrip = async (req, res) => {
 export const updateTrip = async (req, res) => {
   try {
     const trip = await Trip.findById(req.params.id);
-    
-    // Check if trip exists
-    if (!trip) {
-      return res.status(404).json({ message: 'Trip not found' });
-    }
-    
-    // Check if user is the author
+    if (!trip) return res.status(404).json({ message: 'Trip not found' });
     if (trip.author.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized to update this trip' });
     }
-    
-    // Update trip fields
-    const updatedTrip = await Trip.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true }
-    );
-    
-    res.json({
-      message: 'Trip updated successfully',
-      trip: updatedTrip
-    });
+    const updated = await Trip.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ message: 'Trip updated successfully', trip: updated });
   } catch (err) {
-    console.error('Update trip error:', err);
+    console.error('Error updating trip:', err);
     res.status(500).json({ message: 'Error updating trip' });
   }
 };
@@ -107,22 +63,14 @@ export const updateTrip = async (req, res) => {
 export const deleteTrip = async (req, res) => {
   try {
     const trip = await Trip.findById(req.params.id);
-    
-    // Check if trip exists
-    if (!trip) {
-      return res.status(404).json({ message: 'Trip not found' });
-    }
-    
-    // Check if user is the author
+    if (!trip) return res.status(404).json({ message: 'Trip not found' });
     if (trip.author.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized to delete this trip' });
     }
-    
     await Trip.findByIdAndDelete(req.params.id);
-    
     res.json({ message: 'Trip deleted successfully' });
   } catch (err) {
-    console.error('Delete trip error:', err);
+    console.error('Error deleting trip:', err);
     res.status(500).json({ message: 'Error deleting trip' });
   }
 };
@@ -130,75 +78,57 @@ export const deleteTrip = async (req, res) => {
 // Get trips by category
 export const getTripsByCategory = async (req, res) => {
   try {
-    const category = req.params.category;
-    const trips = await Trip.find({ category }).sort({ created: -1 });
-    
+    const trips = await Trip.find({ category: req.params.category }).sort({ created: -1 });
     res.json({ trips });
   } catch (err) {
-    console.error('Error fetching trips by category:', err);
-    res.status(500).json({ message: 'Error fetching trips' });
+    console.error('Error fetching by category:', err);
+    res.status(500).json({ message: 'Error fetching trips by category' });
   }
 };
 
 // Get trips by country
 export const getTripsByCountry = async (req, res) => {
   try {
-    const country = req.params.country;
-    const trips = await Trip.find({ country }).sort({ created: -1 });
-    
+    const trips = await Trip.find({ country: req.params.country }).sort({ created: -1 });
     res.json({ trips });
   } catch (err) {
-    console.error('Error fetching trips by country:', err);
-    res.status(500).json({ message: 'Error fetching trips' });
+    console.error('Error fetching by country:', err);
+    res.status(500).json({ message: 'Error fetching trips by country' });
   }
 };
 
 // Search trips
 export const searchTrips = async (req, res) => {
   try {
-    const searchQuery = req.query.q;
-    
-    if (!searchQuery) {
-      return res.status(400).json({ message: 'Search query is required' });
-    }
-    
+    const q = req.query.q;
+    if (!q) return res.status(400).json({ message: 'Search query is required' });
     const trips = await Trip.find({
       $or: [
-        { title: { $regex: searchQuery, $options: 'i' } },
-        { country: { $regex: searchQuery, $options: 'i' } },
-        { description: { $regex: searchQuery, $options: 'i' } },
-        { category: { $regex: searchQuery, $options: 'i' } }
+        { title: { $regex: q, $options: 'i' } },
+        { country: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } },
+        { category: { $regex: q, $options: 'i' } }
       ]
     }).sort({ created: -1 });
-    
     res.json({ trips });
   } catch (err) {
-    console.error('Search trips error:', err);
+    console.error('Error searching trips:', err);
     res.status(500).json({ message: 'Error searching trips' });
   }
-}; 
+};
 
+// Toggle save/like for a trip
 export const toggleSaveTrip = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const tripId = req.params.id;
-
-    // Load user
-    const user = await User.findById(userId);
+    const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Toggle
-    const idx = user.bookings.indexOf(tripId);
-    let saved;
-    if (idx > -1) {
-      user.bookings.splice(idx, 1);
-      saved = false;
-    } else {
-      user.bookings.push(tripId);
-      saved = true;
-    }
-    await user.save();
+    const idx = user.bookings.indexOf(req.params.id);
+    const saved = idx === -1;
+    if (saved) user.bookings.push(req.params.id);
+    else user.bookings.splice(idx, 1);
 
+    await user.save();
     res.json({ success: true, saved });
   } catch (err) {
     console.error('Error toggling save trip:', err);

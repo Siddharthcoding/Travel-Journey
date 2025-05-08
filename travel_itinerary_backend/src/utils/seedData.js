@@ -6,7 +6,7 @@ import { User } from '../models/User.js';
 dotenv.config();
 
 // Sample trip data with more destinations by continent
-const tripData = [
+export const tripData = [
   // South America trips
   {
     title: "Rio de Janeiro",
@@ -460,49 +460,3 @@ const tripData = [
     ]
   }
 ];
-
-// Connect to database and seed data
-const seedDatabase = async () => {
-  try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/travel_itinerary');
-    console.log('Connected to MongoDB');
-    
-    // Clear existing data
-    await Trip.deleteMany({});
-    console.log('Cleared existing trips');
-    
-    // Find an admin user or create one if needed
-    let adminUser = await User.findOne({ email: 'admin@traveljourney.com' });
-    
-    if (!adminUser) {
-      adminUser = new User({
-        name: 'Admin User',
-        email: 'admin@traveljourney.com',
-        password: 'admin123'
-      });
-      await adminUser.save();
-      console.log('Created admin user');
-    }
-    
-    // Add author to each trip
-    const tripsWithAuthor = tripData.map(trip => ({
-      ...trip,
-      author: adminUser._id
-    }));
-    
-    // Insert trips
-    await Trip.insertMany(tripsWithAuthor);
-    console.log(`Database seeded with ${tripsWithAuthor.length} trips`);
-    
-    // Disconnect
-    await mongoose.disconnect();
-    console.log('Disconnected from MongoDB');
-    
-  } catch (error) {
-    console.error('Error seeding database:', error);
-  }
-};
-
-// Run seeder
-seedDatabase(); 

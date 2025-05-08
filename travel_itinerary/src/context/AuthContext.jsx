@@ -13,7 +13,9 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState("");
   
   // API URL from environment or default
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = BASE_URL.endsWith('/api') ? BASE_URL : `${BASE_URL}/api`;
+
   
   // Check if user is already logged in on component mount
   useEffect(() => {
@@ -44,10 +46,11 @@ export function AuthProvider({ children }) {
         email,
         password
       });
+      
       setCurrentUser(response.data.user);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       if (response.data.user.token) {
-        localStorage.setItem('token', response.data.user.token); // <-- ADD THIS
+        localStorage.setItem('token', response.data.user.token);
       }
       return response.data.user;
     } catch (err) {
@@ -57,6 +60,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   }
+  
   
 
   // Login function

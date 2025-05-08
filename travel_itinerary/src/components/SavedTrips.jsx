@@ -108,34 +108,29 @@ export default function SavedTrips() {
         ) : (
           savedTrips.map((trip, idx) => (
             <motion.div
-              key={trip._id}          // ← use the Mongo _id as the key
+              key={trip._id}            // ← stable unique key
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden
-                         shadow-md mb-6 cursor-pointer"
+              className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-md mb-6 cursor-pointer"
               onClick={() => navigate(`/trip/${trip._id}`)}
             >
               <div className="relative">
                 <img
-                  src={trip.image || '/fallback.jpg'} // fallback if missing
+                  src={trip.image || "/fallback.jpg"}
                   alt={trip.title}
                   className="w-full h-52 object-cover"
                 />
                 <motion.button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleToggle(trip._id);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); handleToggle(trip._id); }}
                   whileTap={{ scale: 0.9 }}
-                  className="absolute top-3 right-3 bg-white/30 backdrop-blur-md
-                             rounded-full p-2.5 shadow-md"
+                  className="absolute top-3 right-3 bg-white/30 backdrop-blur-md rounded-full p-2.5 shadow-md"
                 >
                   <motion.svg
                     animate={{ scale: [1, 1.3, 1] }}
                     transition={{ duration: 0.3 }}
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-red-500 fill-red-500"
+                    className="h-5 w-5 text-red-500"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
